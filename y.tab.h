@@ -7,11 +7,14 @@
 #define ID 263
 #define RETURN 264
 #define CONST 265
-#define OROR 266
-#define ANDAND 267
-#define ARITHCOMPARE 268
-#define PLUSPLUS 269
-#define MINUSMINUS 270
+#define COMMENT_START 266
+#define COMMENT_SINGLE 267
+#define COMMENT_END 268
+#define OROR 269
+#define ANDAND 270
+#define ARITHCOMPARE 271
+#define PLUSPLUS 272
+#define MINUSMINUS 273
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1

@@ -5,6 +5,9 @@
   #include <stdio.h>
   #include <string.h>
   #include <stdlib.h>
+  extern int numLines;
+  extern char line[1000];
+  extern char *yytext;
 %}
 
 %start program /* Starting symbol */
@@ -19,6 +22,7 @@
 
 %token INT_CONSTANT DOUB_CONSTANT CHAR_CONSTANT BOOL_CONSTANT NONVOIDTYPE VOIDTYPE ID
 %token RETURN CONST
+%token COMMENT_START COMMENT_SINGLE COMMENT_END
 
 %type <strVal> ID
 
@@ -55,6 +59,7 @@ var_declaration:
   | array_declaration
   | func_declaration
   | const_declaration
+  | COMMENT
   ;
 
 scalar_declaration:
@@ -212,6 +217,20 @@ expression:
   | expression MINUSMINUS
   ;
 
+COMMENT:
+    COMMENT_START comment_contents COMMENT_END
+  | COMMENT_SINGLE comment_content
+  ;
+
+comment_contents:
+    comment_contents comment_content
+  | comment_content
+  ;
+
+comment_content:
+    expression
+  ;
+
 %%
 
 int main()
@@ -223,7 +242,9 @@ int main()
 
 int yyerror(char *s)
 {
-  fprintf(stderr, "*** Error at line %d:\n", );
-  fprintf(stderr, "***%s\n", s);
+  fprintf(stderr, "*** Error at line %d: %s\n", ++numLines, line);
+  fprintf(stderr, "\n");
+  fprintf(stderr, "Unmatched token: %s\n", yytext);
+  fprintf(stderr, "*** %s\n", s);
   exit(1);
 }

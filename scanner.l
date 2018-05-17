@@ -6,6 +6,7 @@
   #include <string.h>
   #include <stdlib.h>
   #include "y.tab.h"
+  #include "common.h"
 
   // Type of tokens.
   typedef enum {key, id, op, punc, integer, doub, ch, sci, str, nl, noth, error} Type;
@@ -13,8 +14,6 @@
 
   void print(Type type); // Print out the output messages.
 
-  int numLines = 0; // Count the number of lines of the input file.
-  char line[1000] = ""; // Buffer for the texts of a line.
   bool inComment = false; // See if the current position is in a comment.
   bool mulComment = false; // See which type of comment.
   bool inError = false; // See if encounter error.
@@ -45,13 +44,16 @@ WHITESPACE [ \t]+
 
 "/*" {inComment = true;
       mulComment = true;
-      print(noth);}
+      print(noth);
+      return COMMENT_START;}
 "//" {inComment = true;
       mulComment = false;
-      print(noth);}
+      print(noth);
+      return COMMENT_SINGLE;}
 "*/" {inComment = false;
       mulComment = false;
-      print(noth);}
+      print(noth);
+      return COMMENT_END;}
 
 "void" {print(key);
         return VOIDTYPE;}
@@ -77,7 +79,7 @@ WHITESPACE [ \t]+
 
 "return" {print(key);
           return RETURN;}
-          
+
 "break" {print(key);}
 "continue" {print(key);}
 
