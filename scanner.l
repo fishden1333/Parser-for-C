@@ -4,6 +4,7 @@
 %{
   #include <stdio.h>
   #include <string.h>
+  #include <stdlib.h>
   #include "y.tab.h"
 
   // Type of tokens.
@@ -23,8 +24,6 @@
 
 DIGIT [0-9]
 ID [_a-zA-Z][_a-zA-Z0-9]*
-OP [+-/%<>=!&*]
-PUNC [:;,.\[\](){}]
 INTEGER 0|[1-9]{DIGIT}*
 DOUBLE {DIGIT}*\.{DIGIT}+|{DIGIT}+\.{DIGIT}*
 SCI {DIGIT}+[eE][+-]?{DIGIT}+|{DOUBLE}[eE][+-]?{DIGIT}+
@@ -54,24 +53,45 @@ WHITESPACE [ \t]+
       mulComment = false;
       print(noth);}
 
-"void" {print(key);}
-"int" {print(key);}
-"double" {print(key);}
-"bool" {print(key);}
-"char" {print(key);}
-"null" {print(key);}
+"void" {print(key);
+        strcpy(yylval.strVal, yytext);
+        return TYPE;}
+"int" {print(key);
+       strcpy(yylval.strVal, yytext);
+       return TYPE;}
+"double" {print(key);
+          strcpy(yylval.strVal, yytext);
+          return TYPE;}
+"bool" {print(key);
+        strcpy(yylval.strVal, yytext);
+        return TYPE;}
+"char" {print(key);
+        strcpy(yylval.strVal, yytext);
+        return TYPE;}
+
+"null" {print(key);
+        yylval.intVal = 0;
+        return CONSTANT;}
+
 "for" {print(key);}
 "while" {print(key);}
 "do" {print(key);}
 "if" {print(key);}
 "else" {print(key);}
 "switch" {print(key);}
-"return" {print(key);}
+"return" {print(key);
+          return RETURN;}
 "break" {print(key);}
 "continue" {print(key);}
 "const" {print(key);}
-"true" {print(key);}
-"false" {print(key);}
+
+"true" {print(key);
+        yylval.intVal = 1;
+        return CONSTANT;}
+"false" {print(key);
+         yylval.intVal = 0;
+         return CONSTANT;}
+
 "struct" {print(key);}
 "case" {print(key);}
 "default" {print(key);}
@@ -117,29 +137,85 @@ WHITESPACE [ \t]+
 "ungetc" {print(key);}
 "perror" {print(key);}
 
-{PUNC} {print(punc);}
+":" {print(punc);
+     return ':';}
+";" {print(punc);
+     return ';';}
+"," {print(punc);
+     return ',';}
+"." {print(punc);
+     return '.';}
+"[" {print(punc);
+     return '[';}
+"]" {print(punc);
+     return ']';}
+"(" {print(punc);
+     return '(';}
+")" {print(punc);
+     return ')';}
+"{" {print(punc);
+     return '{';}
+"}" {print(punc);
+     return '}';}
 
-"++" {print(op);}
-"--" {print(op);}
-"<=" {print(op);}
-">=" {print(op);}
-"==" {print(op);}
-"!=" {print(op);}
-"&&" {print(op);}
-"||" {print(op);}
-{OP} {print(op);}
+"++" {print(op);
+      return PLUSPLUS;}
+"--" {print(op);
+      return MINUSMINUS;}
+"<=" {print(op);
+      return ARITHCOMPARE;}
+">=" {print(op);
+      return ARITHCOMPARE;}
+"==" {print(op);
+      return ARITHCOMPARE;}
+"!=" {print(op);
+      return ARITHCOMPARE;}
+"&&" {print(op);
+      return ANDAND;}
+"||" {print(op);
+      return OROR;}
+"+" {print(op);
+     return '+';}
+"-" {print(op);
+     return '-';}
+"*" {print(op);
+     return '*';}
+"/" {print(op);
+     return '/';}
+"%" {print(op);
+     return '%';}
+"<" {print(op);
+     return ARITHCOMPARE;}
+">" {print(op);
+     return ARITHCOMPARE;}
+"=" {print(op);
+     return '=';}
+"!" {print(op);
+     return '!';}
+"&" {print(op);
+     return '&';}
 
 {DOUBLE}{DOUBLE}+ {print(error);}
 
-{INTEGER} {print(integer);}
+{INTEGER} {print(integer);
+           yylval.intVal = atoi(yytext);
+           return CONSTANT;}
 
-{DOUBLE} {print(doub);}
+{DOUBLE} {print(doub);
+          yylval.doubVal = atof(yytext);
+          return CONSTANT;}
 
-{SCI} {print(sci);}
+{SCI} {print(sci);
+       yylval.doubVal = atof(yytext);
+       return CONSTANT;}
 
-{ID} {print(id);}
+{ID} {print(id);
+      strcpy(yylval.strVal, yytext);
+      return ID;}
 
-{CHAR} {print(ch);}
+{CHAR} {print(ch);
+        yylval.charVal = yytext[0];
+        return CONSTANT;}
 
 {STRING} {print(str);}
 
@@ -157,12 +233,6 @@ WHITESPACE [ \t]+
 . {print(error);}
 
 %%
-
-int main()
-{
-  yylex();
-  return 0;
-}
 
 int yywrap()
 {

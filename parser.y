@@ -3,20 +3,34 @@
 
 %{
   #include <stdio.h>
+  #include <string.h>
 %}
 
-% token  ID  NUM
+%start program
+%union {
+         int intVal;
+         double doubVal;
+         char charVal;
+         char *strVal;
+       }
+
+%token CONSTANT TYPE ID
+%token RETURN
+
+%left <charVal> ';'
+%left <charVal> ','
+%right <charVal> '='
+%left <charVal> OROR
+%left <charVal> ANDAND
+%left <charVal> ARITHCOMPARE
+%left <charVal> '+' '-'
+%left <charVal> '*' '/' '%'
+%nonassoc <charVal> PLUSPLUS
+%nonassoc <charVal> MINUSMINUS
 
 %%
 
-statement:  ID = expression
-                   | expression  { printf(“= %d\n”, $1); }
-                    ;
-
-expression:  expression  ‘+’  NUM    { $$ = $1 + $3; }
-                   |  expression  ‘-’  NUM    { $$ = $1 - $3; }
-                   |  NUM     { $$ = $1; }
-                   ;
+program:  ;
 
 %%
 
@@ -28,6 +42,6 @@ int main()
 
 int yyerror(char *s)
 {
-  fprintf( stderr,  “%s\n”,  s );
+  fprintf(stderr, "%s\n", s);
   return 0;
 }
