@@ -1,21 +1,2237 @@
    0  $accept : program $end
 
-   1  program :
+   1  program : external func_definition
+
+   2  external : external var_declaration
+   3           | external func_definition
+   4           | var_declaration
+   5           | func_definition
+
+   6  var_declaration : scalar_declaration
+   7                  | array_declaration
+   8                  | func_declaration
+   9                  | const_declaration
+
+  10  scalar_declaration : NONVOIDTYPE ID_declarations ';'
+
+  11  array_declaration : NONVOIDTYPE IDarr_declarations ';'
+
+  12  func_declaration : NONVOIDTYPE IDfunc_declarations ';'
+  13                   | VOIDTYPE IDfunc_declarations ';'
+
+  14  const_declaration : CONST NONVOIDTYPE IDconst_declarations ';'
+
+  15  ID_declarations : ID_declarations ',' ID_declaration
+  16                  | ID_declaration
+
+  17  ID_declaration : ID
+  18                 | ID '=' expression
+
+  19  IDarr_declarations : IDarr_declarations ',' IDarr_declaration
+  20                     | IDarr_declaration
+
+  21  IDarr_declaration : ID dimensions
+  22                    | ID dimension '=' arr_content
+
+  23  dimensions : dimensions dimension
+  24             | dimension
+
+  25  dimension : '[' INT_CONSTANT ']'
+
+  26  arr_content : '{' expressions '}'
+  27              | '{' '}'
+
+  28  IDfunc_declarations : IDfunc_declarations ',' IDfunc_declaration
+  29                      | IDfunc_declaration
+
+  30  IDfunc_declaration : ID '(' parameters ')'
+  31                     | ID '(' ')'
+
+  32  parameters : parameters ',' parameter
+  33             | parameter
+
+  34  parameter : NONVOIDTYPE ID
+  35            | NONVOIDTYPE ID dimensions
+
+  36  IDconst_declarations : IDconst_declarations ',' IDconst_declaration
+  37                       | IDconst_declaration
+
+  38  IDconst_declaration : ID '=' CONSTANT
+
+  39  CONSTANT : INT_CONSTANT
+  40           | DOUB_CONSTANT
+  41           | CHAR_CONSTANT
+  42           | BOOL_CONSTANT
+
+  43  func_definition : NONVOIDTYPE ID '(' parameters ')' '{' func_contents RETURN expression ';' '}'
+  44                  | NONVOIDTYPE ID '(' ')' '{' func_contents RETURN expression ';' '}'
+  45                  | NONVOIDTYPE ID '(' parameters ')' '{' RETURN expression ';' '}'
+  46                  | NONVOIDTYPE ID '(' ')' '{' RETURN expression ';' '}'
+  47                  | VOIDTYPE ID '(' parameters ')' '{' func_contents RETURN ';' '}'
+  48                  | VOIDTYPE ID '(' ')' '{' func_contents RETURN ';' '}'
+  49                  | VOIDTYPE ID '(' parameters ')' '{' RETURN ';' '}'
+  50                  | VOIDTYPE ID '(' ')' '{' RETURN ';' '}'
+
+  51  func_contents : var_declarations func_statements
+  52                | var_declarations
+  53                | func_statements
+
+  54  var_declarations : var_declarations var_declaration
+  55                   | var_declaration
+
+  56  func_statements : func_statement func_statements
+  57                  | func_statement
+
+  58  func_statement : simple_statement
+  59                 | func_invocation
+
+  60  simple_statement : ID '=' expression ';'
+  61                   | ID dimensions '=' expression ';'
+
+  62  func_invocation : ID '(' expressions ')' ';'
+  63                  | ID '(' ')' ';'
+
+  64  expressions : expressions ',' expression
+  65              | expression
+
+  66  expression : CONSTANT
+  67             | ID
+  68             | ID dimensions
+  69             | ID '(' expressions ')'
+  70             | ID '(' ')'
+  71             | expression '=' expression
+  72             | expression '+' expression
+  73             | expression '-' expression
+  74             | expression '*' expression
+  75             | expression '/' expression
+  76             | expression '%' expression
+  77             | expression ARITHCOMPARE expression
+  78             | '!' expression
+  79             | expression ANDAND expression
+  80             | expression OROR expression
+  81             | expression PLUSPLUS
+  82             | expression MINUSMINUS
 
 state 0
 	$accept : . program $end  (0)
-	program : .  (1)
 
-	.  reduce 1
+	NONVOIDTYPE  shift 1
+	VOIDTYPE  shift 2
+	CONST  shift 3
+	.  error
 
-	program  goto 1
+	program  goto 4
+	external  goto 5
+	func_definition  goto 6
+	var_declaration  goto 7
+	scalar_declaration  goto 8
+	array_declaration  goto 9
+	func_declaration  goto 10
+	const_declaration  goto 11
 
 
 state 1
+	scalar_declaration : NONVOIDTYPE . ID_declarations ';'  (10)
+	array_declaration : NONVOIDTYPE . IDarr_declarations ';'  (11)
+	func_declaration : NONVOIDTYPE . IDfunc_declarations ';'  (12)
+	func_definition : NONVOIDTYPE . ID '(' parameters ')' '{' func_contents RETURN expression ';' '}'  (43)
+	func_definition : NONVOIDTYPE . ID '(' ')' '{' func_contents RETURN expression ';' '}'  (44)
+	func_definition : NONVOIDTYPE . ID '(' parameters ')' '{' RETURN expression ';' '}'  (45)
+	func_definition : NONVOIDTYPE . ID '(' ')' '{' RETURN expression ';' '}'  (46)
+
+	ID  shift 12
+	.  error
+
+	ID_declarations  goto 13
+	IDarr_declarations  goto 14
+	IDfunc_declarations  goto 15
+	ID_declaration  goto 16
+	IDarr_declaration  goto 17
+	IDfunc_declaration  goto 18
+
+
+state 2
+	func_declaration : VOIDTYPE . IDfunc_declarations ';'  (13)
+	func_definition : VOIDTYPE . ID '(' parameters ')' '{' func_contents RETURN ';' '}'  (47)
+	func_definition : VOIDTYPE . ID '(' ')' '{' func_contents RETURN ';' '}'  (48)
+	func_definition : VOIDTYPE . ID '(' parameters ')' '{' RETURN ';' '}'  (49)
+	func_definition : VOIDTYPE . ID '(' ')' '{' RETURN ';' '}'  (50)
+
+	ID  shift 19
+	.  error
+
+	IDfunc_declarations  goto 20
+	IDfunc_declaration  goto 18
+
+
+state 3
+	const_declaration : CONST . NONVOIDTYPE IDconst_declarations ';'  (14)
+
+	NONVOIDTYPE  shift 21
+	.  error
+
+
+state 4
 	$accept : program . $end  (0)
 
 	$end  accept
 
 
-19 terminals, 2 nonterminals
-2 grammar rules, 2 states
+state 5
+	program : external . func_definition  (1)
+	external : external . var_declaration  (2)
+	external : external . func_definition  (3)
+
+	NONVOIDTYPE  shift 1
+	VOIDTYPE  shift 2
+	CONST  shift 3
+	.  error
+
+	func_definition  goto 22
+	var_declaration  goto 23
+	scalar_declaration  goto 8
+	array_declaration  goto 9
+	func_declaration  goto 10
+	const_declaration  goto 11
+
+
+state 6
+	external : func_definition .  (5)
+
+	.  reduce 5
+
+
+state 7
+	external : var_declaration .  (4)
+
+	.  reduce 4
+
+
+state 8
+	var_declaration : scalar_declaration .  (6)
+
+	.  reduce 6
+
+
+state 9
+	var_declaration : array_declaration .  (7)
+
+	.  reduce 7
+
+
+state 10
+	var_declaration : func_declaration .  (8)
+
+	.  reduce 8
+
+
+state 11
+	var_declaration : const_declaration .  (9)
+
+	.  reduce 9
+
+
+state 12
+	ID_declaration : ID .  (17)
+	ID_declaration : ID . '=' expression  (18)
+	IDarr_declaration : ID . dimensions  (21)
+	IDarr_declaration : ID . dimension '=' arr_content  (22)
+	IDfunc_declaration : ID . '(' parameters ')'  (30)
+	IDfunc_declaration : ID . '(' ')'  (31)
+	func_definition : NONVOIDTYPE ID . '(' parameters ')' '{' func_contents RETURN expression ';' '}'  (43)
+	func_definition : NONVOIDTYPE ID . '(' ')' '{' func_contents RETURN expression ';' '}'  (44)
+	func_definition : NONVOIDTYPE ID . '(' parameters ')' '{' RETURN expression ';' '}'  (45)
+	func_definition : NONVOIDTYPE ID . '(' ')' '{' RETURN expression ';' '}'  (46)
+
+	'='  shift 24
+	'['  shift 25
+	'('  shift 26
+	';'  reduce 17
+	','  reduce 17
+
+	dimensions  goto 27
+	dimension  goto 28
+
+
+state 13
+	scalar_declaration : NONVOIDTYPE ID_declarations . ';'  (10)
+	ID_declarations : ID_declarations . ',' ID_declaration  (15)
+
+	';'  shift 29
+	','  shift 30
+	.  error
+
+
+state 14
+	array_declaration : NONVOIDTYPE IDarr_declarations . ';'  (11)
+	IDarr_declarations : IDarr_declarations . ',' IDarr_declaration  (19)
+
+	';'  shift 31
+	','  shift 32
+	.  error
+
+
+state 15
+	func_declaration : NONVOIDTYPE IDfunc_declarations . ';'  (12)
+	IDfunc_declarations : IDfunc_declarations . ',' IDfunc_declaration  (28)
+
+	';'  shift 33
+	','  shift 34
+	.  error
+
+
+state 16
+	ID_declarations : ID_declaration .  (16)
+
+	.  reduce 16
+
+
+state 17
+	IDarr_declarations : IDarr_declaration .  (20)
+
+	.  reduce 20
+
+
+state 18
+	IDfunc_declarations : IDfunc_declaration .  (29)
+
+	.  reduce 29
+
+
+state 19
+	IDfunc_declaration : ID . '(' parameters ')'  (30)
+	IDfunc_declaration : ID . '(' ')'  (31)
+	func_definition : VOIDTYPE ID . '(' parameters ')' '{' func_contents RETURN ';' '}'  (47)
+	func_definition : VOIDTYPE ID . '(' ')' '{' func_contents RETURN ';' '}'  (48)
+	func_definition : VOIDTYPE ID . '(' parameters ')' '{' RETURN ';' '}'  (49)
+	func_definition : VOIDTYPE ID . '(' ')' '{' RETURN ';' '}'  (50)
+
+	'('  shift 35
+	.  error
+
+
+state 20
+	func_declaration : VOIDTYPE IDfunc_declarations . ';'  (13)
+	IDfunc_declarations : IDfunc_declarations . ',' IDfunc_declaration  (28)
+
+	';'  shift 36
+	','  shift 34
+	.  error
+
+
+state 21
+	const_declaration : CONST NONVOIDTYPE . IDconst_declarations ';'  (14)
+
+	ID  shift 37
+	.  error
+
+	IDconst_declarations  goto 38
+	IDconst_declaration  goto 39
+
+
+state 22
+	program : external func_definition .  (1)
+	external : external func_definition .  (3)
+
+	$end  reduce 1
+	NONVOIDTYPE  reduce 3
+	VOIDTYPE  reduce 3
+	CONST  reduce 3
+
+
+state 23
+	external : external var_declaration .  (2)
+
+	.  reduce 2
+
+
+state 24
+	ID_declaration : ID '=' . expression  (18)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 46
+	CONSTANT  goto 47
+
+
+state 25
+	dimension : '[' . INT_CONSTANT ']'  (25)
+
+	INT_CONSTANT  shift 48
+	.  error
+
+
+state 26
+	IDfunc_declaration : ID '(' . parameters ')'  (30)
+	IDfunc_declaration : ID '(' . ')'  (31)
+	func_definition : NONVOIDTYPE ID '(' . parameters ')' '{' func_contents RETURN expression ';' '}'  (43)
+	func_definition : NONVOIDTYPE ID '(' . ')' '{' func_contents RETURN expression ';' '}'  (44)
+	func_definition : NONVOIDTYPE ID '(' . parameters ')' '{' RETURN expression ';' '}'  (45)
+	func_definition : NONVOIDTYPE ID '(' . ')' '{' RETURN expression ';' '}'  (46)
+
+	NONVOIDTYPE  shift 49
+	')'  shift 50
+	.  error
+
+	parameters  goto 51
+	parameter  goto 52
+
+
+state 27
+	IDarr_declaration : ID dimensions .  (21)
+	dimensions : dimensions . dimension  (23)
+
+	'['  shift 25
+	';'  reduce 21
+	','  reduce 21
+
+	dimension  goto 53
+
+
+state 28
+	IDarr_declaration : ID dimension . '=' arr_content  (22)
+	dimensions : dimension .  (24)
+
+	'='  shift 54
+	';'  reduce 24
+	','  reduce 24
+	'['  reduce 24
+
+
+state 29
+	scalar_declaration : NONVOIDTYPE ID_declarations ';' .  (10)
+
+	.  reduce 10
+
+
+state 30
+	ID_declarations : ID_declarations ',' . ID_declaration  (15)
+
+	ID  shift 55
+	.  error
+
+	ID_declaration  goto 56
+
+
+state 31
+	array_declaration : NONVOIDTYPE IDarr_declarations ';' .  (11)
+
+	.  reduce 11
+
+
+state 32
+	IDarr_declarations : IDarr_declarations ',' . IDarr_declaration  (19)
+
+	ID  shift 57
+	.  error
+
+	IDarr_declaration  goto 58
+
+
+state 33
+	func_declaration : NONVOIDTYPE IDfunc_declarations ';' .  (12)
+
+	.  reduce 12
+
+
+state 34
+	IDfunc_declarations : IDfunc_declarations ',' . IDfunc_declaration  (28)
+
+	ID  shift 59
+	.  error
+
+	IDfunc_declaration  goto 60
+
+
+state 35
+	IDfunc_declaration : ID '(' . parameters ')'  (30)
+	IDfunc_declaration : ID '(' . ')'  (31)
+	func_definition : VOIDTYPE ID '(' . parameters ')' '{' func_contents RETURN ';' '}'  (47)
+	func_definition : VOIDTYPE ID '(' . ')' '{' func_contents RETURN ';' '}'  (48)
+	func_definition : VOIDTYPE ID '(' . parameters ')' '{' RETURN ';' '}'  (49)
+	func_definition : VOIDTYPE ID '(' . ')' '{' RETURN ';' '}'  (50)
+
+	NONVOIDTYPE  shift 49
+	')'  shift 61
+	.  error
+
+	parameters  goto 62
+	parameter  goto 52
+
+
+state 36
+	func_declaration : VOIDTYPE IDfunc_declarations ';' .  (13)
+
+	.  reduce 13
+
+
+state 37
+	IDconst_declaration : ID . '=' CONSTANT  (38)
+
+	'='  shift 63
+	.  error
+
+
+state 38
+	const_declaration : CONST NONVOIDTYPE IDconst_declarations . ';'  (14)
+	IDconst_declarations : IDconst_declarations . ',' IDconst_declaration  (36)
+
+	';'  shift 64
+	','  shift 65
+	.  error
+
+
+state 39
+	IDconst_declarations : IDconst_declaration .  (37)
+
+	.  reduce 37
+
+
+state 40
+	CONSTANT : INT_CONSTANT .  (39)
+
+	.  reduce 39
+
+
+state 41
+	CONSTANT : DOUB_CONSTANT .  (40)
+
+	.  reduce 40
+
+
+state 42
+	CONSTANT : CHAR_CONSTANT .  (41)
+
+	.  reduce 41
+
+
+state 43
+	CONSTANT : BOOL_CONSTANT .  (42)
+
+	.  reduce 42
+
+
+state 44
+	expression : ID .  (67)
+	expression : ID . dimensions  (68)
+	expression : ID . '(' expressions ')'  (69)
+	expression : ID . '(' ')'  (70)
+
+	'['  shift 25
+	'('  shift 66
+	';'  reduce 67
+	','  reduce 67
+	'='  reduce 67
+	OROR  reduce 67
+	ANDAND  reduce 67
+	ARITHCOMPARE  reduce 67
+	'+'  reduce 67
+	'-'  reduce 67
+	'*'  reduce 67
+	'/'  reduce 67
+	'%'  reduce 67
+	PLUSPLUS  reduce 67
+	MINUSMINUS  reduce 67
+	'}'  reduce 67
+	')'  reduce 67
+
+	dimensions  goto 67
+	dimension  goto 68
+
+
+state 45
+	expression : '!' . expression  (78)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 69
+	CONSTANT  goto 47
+
+
+state 46
+	ID_declaration : ID '=' expression .  (18)
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 18
+	','  reduce 18
+
+
+state 47
+	expression : CONSTANT .  (66)
+
+	.  reduce 66
+
+
+state 48
+	dimension : '[' INT_CONSTANT . ']'  (25)
+
+	']'  shift 81
+	.  error
+
+
+state 49
+	parameter : NONVOIDTYPE . ID  (34)
+	parameter : NONVOIDTYPE . ID dimensions  (35)
+
+	ID  shift 82
+	.  error
+
+
+state 50
+	IDfunc_declaration : ID '(' ')' .  (31)
+	func_definition : NONVOIDTYPE ID '(' ')' . '{' func_contents RETURN expression ';' '}'  (44)
+	func_definition : NONVOIDTYPE ID '(' ')' . '{' RETURN expression ';' '}'  (46)
+
+	'{'  shift 83
+	';'  reduce 31
+	','  reduce 31
+
+
+state 51
+	IDfunc_declaration : ID '(' parameters . ')'  (30)
+	parameters : parameters . ',' parameter  (32)
+	func_definition : NONVOIDTYPE ID '(' parameters . ')' '{' func_contents RETURN expression ';' '}'  (43)
+	func_definition : NONVOIDTYPE ID '(' parameters . ')' '{' RETURN expression ';' '}'  (45)
+
+	','  shift 84
+	')'  shift 85
+	.  error
+
+
+state 52
+	parameters : parameter .  (33)
+
+	.  reduce 33
+
+
+state 53
+	dimensions : dimensions dimension .  (23)
+
+	.  reduce 23
+
+
+state 54
+	IDarr_declaration : ID dimension '=' . arr_content  (22)
+
+	'{'  shift 86
+	.  error
+
+	arr_content  goto 87
+
+
+state 55
+	ID_declaration : ID .  (17)
+	ID_declaration : ID . '=' expression  (18)
+
+	'='  shift 24
+	';'  reduce 17
+	','  reduce 17
+
+
+state 56
+	ID_declarations : ID_declarations ',' ID_declaration .  (15)
+
+	.  reduce 15
+
+
+state 57
+	IDarr_declaration : ID . dimensions  (21)
+	IDarr_declaration : ID . dimension '=' arr_content  (22)
+
+	'['  shift 25
+	.  error
+
+	dimensions  goto 27
+	dimension  goto 28
+
+
+state 58
+	IDarr_declarations : IDarr_declarations ',' IDarr_declaration .  (19)
+
+	.  reduce 19
+
+
+state 59
+	IDfunc_declaration : ID . '(' parameters ')'  (30)
+	IDfunc_declaration : ID . '(' ')'  (31)
+
+	'('  shift 88
+	.  error
+
+
+state 60
+	IDfunc_declarations : IDfunc_declarations ',' IDfunc_declaration .  (28)
+
+	.  reduce 28
+
+
+state 61
+	IDfunc_declaration : ID '(' ')' .  (31)
+	func_definition : VOIDTYPE ID '(' ')' . '{' func_contents RETURN ';' '}'  (48)
+	func_definition : VOIDTYPE ID '(' ')' . '{' RETURN ';' '}'  (50)
+
+	'{'  shift 89
+	';'  reduce 31
+	','  reduce 31
+
+
+state 62
+	IDfunc_declaration : ID '(' parameters . ')'  (30)
+	parameters : parameters . ',' parameter  (32)
+	func_definition : VOIDTYPE ID '(' parameters . ')' '{' func_contents RETURN ';' '}'  (47)
+	func_definition : VOIDTYPE ID '(' parameters . ')' '{' RETURN ';' '}'  (49)
+
+	','  shift 84
+	')'  shift 90
+	.  error
+
+
+state 63
+	IDconst_declaration : ID '=' . CONSTANT  (38)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	.  error
+
+	CONSTANT  goto 91
+
+
+state 64
+	const_declaration : CONST NONVOIDTYPE IDconst_declarations ';' .  (14)
+
+	.  reduce 14
+
+
+state 65
+	IDconst_declarations : IDconst_declarations ',' . IDconst_declaration  (36)
+
+	ID  shift 37
+	.  error
+
+	IDconst_declaration  goto 92
+
+
+state 66
+	expression : ID '(' . expressions ')'  (69)
+	expression : ID '(' . ')'  (70)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	')'  shift 93
+	.  error
+
+	expression  goto 94
+	expressions  goto 95
+	CONSTANT  goto 47
+
+
+state 67
+	dimensions : dimensions . dimension  (23)
+	expression : ID dimensions .  (68)
+
+	'['  shift 25
+	';'  reduce 68
+	','  reduce 68
+	'='  reduce 68
+	OROR  reduce 68
+	ANDAND  reduce 68
+	ARITHCOMPARE  reduce 68
+	'+'  reduce 68
+	'-'  reduce 68
+	'*'  reduce 68
+	'/'  reduce 68
+	'%'  reduce 68
+	PLUSPLUS  reduce 68
+	MINUSMINUS  reduce 68
+	'}'  reduce 68
+	')'  reduce 68
+
+	dimension  goto 53
+
+
+state 68
+	dimensions : dimension .  (24)
+
+	.  reduce 24
+
+
+state 69
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : '!' expression .  (78)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 78
+	','  reduce 78
+	'='  reduce 78
+	OROR  reduce 78
+	ANDAND  reduce 78
+	'}'  reduce 78
+	')'  reduce 78
+
+
+state 70
+	expression : expression '=' . expression  (71)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 96
+	CONSTANT  goto 47
+
+
+state 71
+	expression : expression OROR . expression  (80)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 97
+	CONSTANT  goto 47
+
+
+state 72
+	expression : expression ANDAND . expression  (79)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 98
+	CONSTANT  goto 47
+
+
+state 73
+	expression : expression ARITHCOMPARE . expression  (77)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 99
+	CONSTANT  goto 47
+
+
+state 74
+	expression : expression '+' . expression  (72)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 100
+	CONSTANT  goto 47
+
+
+state 75
+	expression : expression '-' . expression  (73)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 101
+	CONSTANT  goto 47
+
+
+state 76
+	expression : expression '*' . expression  (74)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 102
+	CONSTANT  goto 47
+
+
+state 77
+	expression : expression '/' . expression  (75)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 103
+	CONSTANT  goto 47
+
+
+state 78
+	expression : expression '%' . expression  (76)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 104
+	CONSTANT  goto 47
+
+
+state 79
+	expression : expression PLUSPLUS .  (81)
+
+	.  reduce 81
+
+
+state 80
+	expression : expression MINUSMINUS .  (82)
+
+	.  reduce 82
+
+
+state 81
+	dimension : '[' INT_CONSTANT ']' .  (25)
+
+	.  reduce 25
+
+
+state 82
+	parameter : NONVOIDTYPE ID .  (34)
+	parameter : NONVOIDTYPE ID . dimensions  (35)
+
+	'['  shift 25
+	','  reduce 34
+	')'  reduce 34
+
+	dimensions  goto 105
+	dimension  goto 68
+
+
+state 83
+	func_definition : NONVOIDTYPE ID '(' ')' '{' . func_contents RETURN expression ';' '}'  (44)
+	func_definition : NONVOIDTYPE ID '(' ')' '{' . RETURN expression ';' '}'  (46)
+
+	NONVOIDTYPE  shift 106
+	VOIDTYPE  shift 107
+	ID  shift 108
+	RETURN  shift 109
+	CONST  shift 3
+	.  error
+
+	var_declaration  goto 110
+	scalar_declaration  goto 8
+	array_declaration  goto 9
+	func_declaration  goto 10
+	const_declaration  goto 11
+	func_contents  goto 111
+	var_declarations  goto 112
+	func_statements  goto 113
+	func_statement  goto 114
+	simple_statement  goto 115
+	func_invocation  goto 116
+
+
+state 84
+	parameters : parameters ',' . parameter  (32)
+
+	NONVOIDTYPE  shift 49
+	.  error
+
+	parameter  goto 117
+
+
+state 85
+	IDfunc_declaration : ID '(' parameters ')' .  (30)
+	func_definition : NONVOIDTYPE ID '(' parameters ')' . '{' func_contents RETURN expression ';' '}'  (43)
+	func_definition : NONVOIDTYPE ID '(' parameters ')' . '{' RETURN expression ';' '}'  (45)
+
+	'{'  shift 118
+	';'  reduce 30
+	','  reduce 30
+
+
+state 86
+	arr_content : '{' . expressions '}'  (26)
+	arr_content : '{' . '}'  (27)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	'}'  shift 119
+	.  error
+
+	expression  goto 94
+	expressions  goto 120
+	CONSTANT  goto 47
+
+
+state 87
+	IDarr_declaration : ID dimension '=' arr_content .  (22)
+
+	.  reduce 22
+
+
+state 88
+	IDfunc_declaration : ID '(' . parameters ')'  (30)
+	IDfunc_declaration : ID '(' . ')'  (31)
+
+	NONVOIDTYPE  shift 49
+	')'  shift 121
+	.  error
+
+	parameters  goto 122
+	parameter  goto 52
+
+
+state 89
+	func_definition : VOIDTYPE ID '(' ')' '{' . func_contents RETURN ';' '}'  (48)
+	func_definition : VOIDTYPE ID '(' ')' '{' . RETURN ';' '}'  (50)
+
+	NONVOIDTYPE  shift 106
+	VOIDTYPE  shift 107
+	ID  shift 108
+	RETURN  shift 123
+	CONST  shift 3
+	.  error
+
+	var_declaration  goto 110
+	scalar_declaration  goto 8
+	array_declaration  goto 9
+	func_declaration  goto 10
+	const_declaration  goto 11
+	func_contents  goto 124
+	var_declarations  goto 112
+	func_statements  goto 113
+	func_statement  goto 114
+	simple_statement  goto 115
+	func_invocation  goto 116
+
+
+state 90
+	IDfunc_declaration : ID '(' parameters ')' .  (30)
+	func_definition : VOIDTYPE ID '(' parameters ')' . '{' func_contents RETURN ';' '}'  (47)
+	func_definition : VOIDTYPE ID '(' parameters ')' . '{' RETURN ';' '}'  (49)
+
+	'{'  shift 125
+	';'  reduce 30
+	','  reduce 30
+
+
+state 91
+	IDconst_declaration : ID '=' CONSTANT .  (38)
+
+	.  reduce 38
+
+
+state 92
+	IDconst_declarations : IDconst_declarations ',' IDconst_declaration .  (36)
+
+	.  reduce 36
+
+
+state 93
+	expression : ID '(' ')' .  (70)
+
+	.  reduce 70
+
+
+state 94
+	expressions : expression .  (65)
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	','  reduce 65
+	'}'  reduce 65
+	')'  reduce 65
+
+
+state 95
+	expressions : expressions . ',' expression  (64)
+	expression : ID '(' expressions . ')'  (69)
+
+	','  shift 126
+	')'  shift 127
+	.  error
+
+
+state 96
+	expression : expression . '=' expression  (71)
+	expression : expression '=' expression .  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 71
+	','  reduce 71
+	'}'  reduce 71
+	')'  reduce 71
+
+
+state 97
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression OROR expression .  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 80
+	','  reduce 80
+	'='  reduce 80
+	OROR  reduce 80
+	'}'  reduce 80
+	')'  reduce 80
+
+
+state 98
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression ANDAND expression .  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 79
+	','  reduce 79
+	'='  reduce 79
+	OROR  reduce 79
+	ANDAND  reduce 79
+	'}'  reduce 79
+	')'  reduce 79
+
+
+state 99
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression ARITHCOMPARE expression .  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 77
+	','  reduce 77
+	'='  reduce 77
+	OROR  reduce 77
+	ANDAND  reduce 77
+	ARITHCOMPARE  reduce 77
+	'}'  reduce 77
+	')'  reduce 77
+
+
+state 100
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression '+' expression .  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 72
+	','  reduce 72
+	'='  reduce 72
+	OROR  reduce 72
+	ANDAND  reduce 72
+	ARITHCOMPARE  reduce 72
+	'+'  reduce 72
+	'-'  reduce 72
+	'}'  reduce 72
+	')'  reduce 72
+
+
+state 101
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression '-' expression .  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 73
+	','  reduce 73
+	'='  reduce 73
+	OROR  reduce 73
+	ANDAND  reduce 73
+	ARITHCOMPARE  reduce 73
+	'+'  reduce 73
+	'-'  reduce 73
+	'}'  reduce 73
+	')'  reduce 73
+
+
+state 102
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression '*' expression .  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 74
+	','  reduce 74
+	'='  reduce 74
+	OROR  reduce 74
+	ANDAND  reduce 74
+	ARITHCOMPARE  reduce 74
+	'+'  reduce 74
+	'-'  reduce 74
+	'*'  reduce 74
+	'/'  reduce 74
+	'%'  reduce 74
+	'}'  reduce 74
+	')'  reduce 74
+
+
+state 103
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression '/' expression .  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 75
+	','  reduce 75
+	'='  reduce 75
+	OROR  reduce 75
+	ANDAND  reduce 75
+	ARITHCOMPARE  reduce 75
+	'+'  reduce 75
+	'-'  reduce 75
+	'*'  reduce 75
+	'/'  reduce 75
+	'%'  reduce 75
+	'}'  reduce 75
+	')'  reduce 75
+
+
+state 104
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression '%' expression .  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	';'  reduce 76
+	','  reduce 76
+	'='  reduce 76
+	OROR  reduce 76
+	ANDAND  reduce 76
+	ARITHCOMPARE  reduce 76
+	'+'  reduce 76
+	'-'  reduce 76
+	'*'  reduce 76
+	'/'  reduce 76
+	'%'  reduce 76
+	'}'  reduce 76
+	')'  reduce 76
+
+
+state 105
+	dimensions : dimensions . dimension  (23)
+	parameter : NONVOIDTYPE ID dimensions .  (35)
+
+	'['  shift 25
+	','  reduce 35
+	')'  reduce 35
+
+	dimension  goto 53
+
+
+state 106
+	scalar_declaration : NONVOIDTYPE . ID_declarations ';'  (10)
+	array_declaration : NONVOIDTYPE . IDarr_declarations ';'  (11)
+	func_declaration : NONVOIDTYPE . IDfunc_declarations ';'  (12)
+
+	ID  shift 128
+	.  error
+
+	ID_declarations  goto 13
+	IDarr_declarations  goto 14
+	IDfunc_declarations  goto 15
+	ID_declaration  goto 16
+	IDarr_declaration  goto 17
+	IDfunc_declaration  goto 18
+
+
+state 107
+	func_declaration : VOIDTYPE . IDfunc_declarations ';'  (13)
+
+	ID  shift 59
+	.  error
+
+	IDfunc_declarations  goto 20
+	IDfunc_declaration  goto 18
+
+
+state 108
+	simple_statement : ID . '=' expression ';'  (60)
+	simple_statement : ID . dimensions '=' expression ';'  (61)
+	func_invocation : ID . '(' expressions ')' ';'  (62)
+	func_invocation : ID . '(' ')' ';'  (63)
+
+	'='  shift 129
+	'['  shift 25
+	'('  shift 130
+	.  error
+
+	dimensions  goto 131
+	dimension  goto 68
+
+
+state 109
+	func_definition : NONVOIDTYPE ID '(' ')' '{' RETURN . expression ';' '}'  (46)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 132
+	CONSTANT  goto 47
+
+
+state 110
+	var_declarations : var_declaration .  (55)
+
+	.  reduce 55
+
+
+state 111
+	func_definition : NONVOIDTYPE ID '(' ')' '{' func_contents . RETURN expression ';' '}'  (44)
+
+	RETURN  shift 133
+	.  error
+
+
+state 112
+	func_contents : var_declarations . func_statements  (51)
+	func_contents : var_declarations .  (52)
+	var_declarations : var_declarations . var_declaration  (54)
+
+	NONVOIDTYPE  shift 106
+	VOIDTYPE  shift 107
+	ID  shift 108
+	CONST  shift 3
+	RETURN  reduce 52
+
+	var_declaration  goto 134
+	scalar_declaration  goto 8
+	array_declaration  goto 9
+	func_declaration  goto 10
+	const_declaration  goto 11
+	func_statements  goto 135
+	func_statement  goto 114
+	simple_statement  goto 115
+	func_invocation  goto 116
+
+
+state 113
+	func_contents : func_statements .  (53)
+
+	.  reduce 53
+
+
+state 114
+	func_statements : func_statement . func_statements  (56)
+	func_statements : func_statement .  (57)
+
+	ID  shift 108
+	RETURN  reduce 57
+
+	func_statements  goto 136
+	func_statement  goto 114
+	simple_statement  goto 115
+	func_invocation  goto 116
+
+
+state 115
+	func_statement : simple_statement .  (58)
+
+	.  reduce 58
+
+
+state 116
+	func_statement : func_invocation .  (59)
+
+	.  reduce 59
+
+
+state 117
+	parameters : parameters ',' parameter .  (32)
+
+	.  reduce 32
+
+
+state 118
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' . func_contents RETURN expression ';' '}'  (43)
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' . RETURN expression ';' '}'  (45)
+
+	NONVOIDTYPE  shift 106
+	VOIDTYPE  shift 107
+	ID  shift 108
+	RETURN  shift 137
+	CONST  shift 3
+	.  error
+
+	var_declaration  goto 110
+	scalar_declaration  goto 8
+	array_declaration  goto 9
+	func_declaration  goto 10
+	const_declaration  goto 11
+	func_contents  goto 138
+	var_declarations  goto 112
+	func_statements  goto 113
+	func_statement  goto 114
+	simple_statement  goto 115
+	func_invocation  goto 116
+
+
+state 119
+	arr_content : '{' '}' .  (27)
+
+	.  reduce 27
+
+
+state 120
+	arr_content : '{' expressions . '}'  (26)
+	expressions : expressions . ',' expression  (64)
+
+	','  shift 126
+	'}'  shift 139
+	.  error
+
+
+state 121
+	IDfunc_declaration : ID '(' ')' .  (31)
+
+	.  reduce 31
+
+
+state 122
+	IDfunc_declaration : ID '(' parameters . ')'  (30)
+	parameters : parameters . ',' parameter  (32)
+
+	','  shift 84
+	')'  shift 140
+	.  error
+
+
+state 123
+	func_definition : VOIDTYPE ID '(' ')' '{' RETURN . ';' '}'  (50)
+
+	';'  shift 141
+	.  error
+
+
+state 124
+	func_definition : VOIDTYPE ID '(' ')' '{' func_contents . RETURN ';' '}'  (48)
+
+	RETURN  shift 142
+	.  error
+
+
+state 125
+	func_definition : VOIDTYPE ID '(' parameters ')' '{' . func_contents RETURN ';' '}'  (47)
+	func_definition : VOIDTYPE ID '(' parameters ')' '{' . RETURN ';' '}'  (49)
+
+	NONVOIDTYPE  shift 106
+	VOIDTYPE  shift 107
+	ID  shift 108
+	RETURN  shift 143
+	CONST  shift 3
+	.  error
+
+	var_declaration  goto 110
+	scalar_declaration  goto 8
+	array_declaration  goto 9
+	func_declaration  goto 10
+	const_declaration  goto 11
+	func_contents  goto 144
+	var_declarations  goto 112
+	func_statements  goto 113
+	func_statement  goto 114
+	simple_statement  goto 115
+	func_invocation  goto 116
+
+
+state 126
+	expressions : expressions ',' . expression  (64)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 145
+	CONSTANT  goto 47
+
+
+state 127
+	expression : ID '(' expressions ')' .  (69)
+
+	.  reduce 69
+
+
+state 128
+	ID_declaration : ID .  (17)
+	ID_declaration : ID . '=' expression  (18)
+	IDarr_declaration : ID . dimensions  (21)
+	IDarr_declaration : ID . dimension '=' arr_content  (22)
+	IDfunc_declaration : ID . '(' parameters ')'  (30)
+	IDfunc_declaration : ID . '(' ')'  (31)
+
+	'='  shift 24
+	'['  shift 25
+	'('  shift 88
+	';'  reduce 17
+	','  reduce 17
+
+	dimensions  goto 27
+	dimension  goto 28
+
+
+state 129
+	simple_statement : ID '=' . expression ';'  (60)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 146
+	CONSTANT  goto 47
+
+
+state 130
+	func_invocation : ID '(' . expressions ')' ';'  (62)
+	func_invocation : ID '(' . ')' ';'  (63)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	')'  shift 147
+	.  error
+
+	expression  goto 94
+	expressions  goto 148
+	CONSTANT  goto 47
+
+
+state 131
+	dimensions : dimensions . dimension  (23)
+	simple_statement : ID dimensions . '=' expression ';'  (61)
+
+	'='  shift 149
+	'['  shift 25
+	.  error
+
+	dimension  goto 53
+
+
+state 132
+	func_definition : NONVOIDTYPE ID '(' ')' '{' RETURN expression . ';' '}'  (46)
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	';'  shift 150
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	.  error
+
+
+state 133
+	func_definition : NONVOIDTYPE ID '(' ')' '{' func_contents RETURN . expression ';' '}'  (44)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 151
+	CONSTANT  goto 47
+
+
+state 134
+	var_declarations : var_declarations var_declaration .  (54)
+
+	.  reduce 54
+
+
+state 135
+	func_contents : var_declarations func_statements .  (51)
+
+	.  reduce 51
+
+
+state 136
+	func_statements : func_statement func_statements .  (56)
+
+	.  reduce 56
+
+
+state 137
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' RETURN . expression ';' '}'  (45)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 152
+	CONSTANT  goto 47
+
+
+state 138
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' func_contents . RETURN expression ';' '}'  (43)
+
+	RETURN  shift 153
+	.  error
+
+
+state 139
+	arr_content : '{' expressions '}' .  (26)
+
+	.  reduce 26
+
+
+state 140
+	IDfunc_declaration : ID '(' parameters ')' .  (30)
+
+	.  reduce 30
+
+
+state 141
+	func_definition : VOIDTYPE ID '(' ')' '{' RETURN ';' . '}'  (50)
+
+	'}'  shift 154
+	.  error
+
+
+state 142
+	func_definition : VOIDTYPE ID '(' ')' '{' func_contents RETURN . ';' '}'  (48)
+
+	';'  shift 155
+	.  error
+
+
+state 143
+	func_definition : VOIDTYPE ID '(' parameters ')' '{' RETURN . ';' '}'  (49)
+
+	';'  shift 156
+	.  error
+
+
+state 144
+	func_definition : VOIDTYPE ID '(' parameters ')' '{' func_contents . RETURN ';' '}'  (47)
+
+	RETURN  shift 157
+	.  error
+
+
+state 145
+	expressions : expressions ',' expression .  (64)
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	','  reduce 64
+	'}'  reduce 64
+	')'  reduce 64
+
+
+state 146
+	simple_statement : ID '=' expression . ';'  (60)
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	';'  shift 158
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	.  error
+
+
+state 147
+	func_invocation : ID '(' ')' . ';'  (63)
+
+	';'  shift 159
+	.  error
+
+
+state 148
+	func_invocation : ID '(' expressions . ')' ';'  (62)
+	expressions : expressions . ',' expression  (64)
+
+	','  shift 126
+	')'  shift 160
+	.  error
+
+
+state 149
+	simple_statement : ID dimensions '=' . expression ';'  (61)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 161
+	CONSTANT  goto 47
+
+
+state 150
+	func_definition : NONVOIDTYPE ID '(' ')' '{' RETURN expression ';' . '}'  (46)
+
+	'}'  shift 162
+	.  error
+
+
+state 151
+	func_definition : NONVOIDTYPE ID '(' ')' '{' func_contents RETURN expression . ';' '}'  (44)
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	';'  shift 163
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	.  error
+
+
+state 152
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' RETURN expression . ';' '}'  (45)
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	';'  shift 164
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	.  error
+
+
+state 153
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' func_contents RETURN . expression ';' '}'  (43)
+
+	INT_CONSTANT  shift 40
+	DOUB_CONSTANT  shift 41
+	CHAR_CONSTANT  shift 42
+	BOOL_CONSTANT  shift 43
+	ID  shift 44
+	'!'  shift 45
+	.  error
+
+	expression  goto 165
+	CONSTANT  goto 47
+
+
+state 154
+	func_definition : VOIDTYPE ID '(' ')' '{' RETURN ';' '}' .  (50)
+
+	.  reduce 50
+
+
+state 155
+	func_definition : VOIDTYPE ID '(' ')' '{' func_contents RETURN ';' . '}'  (48)
+
+	'}'  shift 166
+	.  error
+
+
+state 156
+	func_definition : VOIDTYPE ID '(' parameters ')' '{' RETURN ';' . '}'  (49)
+
+	'}'  shift 167
+	.  error
+
+
+state 157
+	func_definition : VOIDTYPE ID '(' parameters ')' '{' func_contents RETURN . ';' '}'  (47)
+
+	';'  shift 168
+	.  error
+
+
+state 158
+	simple_statement : ID '=' expression ';' .  (60)
+
+	.  reduce 60
+
+
+state 159
+	func_invocation : ID '(' ')' ';' .  (63)
+
+	.  reduce 63
+
+
+state 160
+	func_invocation : ID '(' expressions ')' . ';'  (62)
+
+	';'  shift 169
+	.  error
+
+
+state 161
+	simple_statement : ID dimensions '=' expression . ';'  (61)
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	';'  shift 170
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	.  error
+
+
+state 162
+	func_definition : NONVOIDTYPE ID '(' ')' '{' RETURN expression ';' '}' .  (46)
+
+	.  reduce 46
+
+
+state 163
+	func_definition : NONVOIDTYPE ID '(' ')' '{' func_contents RETURN expression ';' . '}'  (44)
+
+	'}'  shift 171
+	.  error
+
+
+state 164
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' RETURN expression ';' . '}'  (45)
+
+	'}'  shift 172
+	.  error
+
+
+state 165
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' func_contents RETURN expression . ';' '}'  (43)
+	expression : expression . '=' expression  (71)
+	expression : expression . '+' expression  (72)
+	expression : expression . '-' expression  (73)
+	expression : expression . '*' expression  (74)
+	expression : expression . '/' expression  (75)
+	expression : expression . '%' expression  (76)
+	expression : expression . ARITHCOMPARE expression  (77)
+	expression : expression . ANDAND expression  (79)
+	expression : expression . OROR expression  (80)
+	expression : expression . PLUSPLUS  (81)
+	expression : expression . MINUSMINUS  (82)
+
+	';'  shift 173
+	'='  shift 70
+	OROR  shift 71
+	ANDAND  shift 72
+	ARITHCOMPARE  shift 73
+	'+'  shift 74
+	'-'  shift 75
+	'*'  shift 76
+	'/'  shift 77
+	'%'  shift 78
+	PLUSPLUS  shift 79
+	MINUSMINUS  shift 80
+	.  error
+
+
+state 166
+	func_definition : VOIDTYPE ID '(' ')' '{' func_contents RETURN ';' '}' .  (48)
+
+	.  reduce 48
+
+
+state 167
+	func_definition : VOIDTYPE ID '(' parameters ')' '{' RETURN ';' '}' .  (49)
+
+	.  reduce 49
+
+
+state 168
+	func_definition : VOIDTYPE ID '(' parameters ')' '{' func_contents RETURN ';' . '}'  (47)
+
+	'}'  shift 174
+	.  error
+
+
+state 169
+	func_invocation : ID '(' expressions ')' ';' .  (62)
+
+	.  reduce 62
+
+
+state 170
+	simple_statement : ID dimensions '=' expression ';' .  (61)
+
+	.  reduce 61
+
+
+state 171
+	func_definition : NONVOIDTYPE ID '(' ')' '{' func_contents RETURN expression ';' '}' .  (44)
+
+	.  reduce 44
+
+
+state 172
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' RETURN expression ';' '}' .  (45)
+
+	.  reduce 45
+
+
+state 173
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' func_contents RETURN expression ';' . '}'  (43)
+
+	'}'  shift 175
+	.  error
+
+
+state 174
+	func_definition : VOIDTYPE ID '(' parameters ')' '{' func_contents RETURN ';' '}' .  (47)
+
+	.  reduce 47
+
+
+state 175
+	func_definition : NONVOIDTYPE ID '(' parameters ')' '{' func_contents RETURN expression ';' '}' .  (43)
+
+	.  reduce 43
+
+
+31 terminals, 31 nonterminals
+83 grammar rules, 176 states

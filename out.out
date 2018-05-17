@@ -1,0 +1,88 @@
+1:
+#key:int
+#id:a
+#punc:;
+2:int a;
+#key:int
+#id:b
+#punc:;
+3:int b;
+4:
+#key:int
+#id:main
+#punc:(
+#punc:)
+5:int main()
+#punc:{
+6:{
+#key:int
+#id:i
+#punc:;
+7:   int i;
+#key:int
+#id:j
+#punc:;
+8:   int j;
+#key:int
+#id:k
+#punc:;
+9:   int k;
+10:
+#id:a
+#op:=
+#id:a
+#op:+
+#id:b
+#op:+
+#integer:3
+#op:+
+#integer:6
+#punc:;
+11:   a = a + b + 3 + 6;
+#id:a
+#op:=
+#id:i
+#op:+
+#id:j
+#op:+
+#id:k
+#op:+
+#integer:3
+#punc:;
+12:   a = i + j + k + 3;
+#id:a
+#op:=
+#id:a
+#op:/
+#integer:2
+#punc:;
+13:   a = a / 2;
+#id:a
+#op:=
+#id:i
+#op:-
+#id:j
+#punc:;
+14:   a = i - j;
+#id:a
+#op:=
+#id:k
+#op:%
+#id:j
+#punc:;
+15:   a = k % j;
+#id:a
+#op:=
+#id:a
+#op:--
+#punc:;
+16:   a = a--;
+17:   
+18:   
+#key:return
+#integer:0
+#punc:;
+19:   return 0;
+#punc:}
+20:}
+No syntax error!

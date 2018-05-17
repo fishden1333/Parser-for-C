@@ -54,24 +54,19 @@ WHITESPACE [ \t]+
       print(noth);}
 
 "void" {print(key);
-        strcpy(yylval.strVal, yytext);
-        return TYPE;}
+        return VOIDTYPE;}
 "int" {print(key);
-       strcpy(yylval.strVal, yytext);
-       return TYPE;}
+       return NONVOIDTYPE;}
 "double" {print(key);
-          strcpy(yylval.strVal, yytext);
-          return TYPE;}
+          return NONVOIDTYPE;}
 "bool" {print(key);
-        strcpy(yylval.strVal, yytext);
-        return TYPE;}
+        return NONVOIDTYPE;}
 "char" {print(key);
-        strcpy(yylval.strVal, yytext);
-        return TYPE;}
+        return NONVOIDTYPE;}
 
 "null" {print(key);
         yylval.intVal = 0;
-        return CONSTANT;}
+        return INT_CONSTANT;}
 
 "for" {print(key);}
 "while" {print(key);}
@@ -79,18 +74,22 @@ WHITESPACE [ \t]+
 "if" {print(key);}
 "else" {print(key);}
 "switch" {print(key);}
+
 "return" {print(key);
           return RETURN;}
+          
 "break" {print(key);}
 "continue" {print(key);}
-"const" {print(key);}
+
+"const" {print(key);
+         return CONST;}
 
 "true" {print(key);
         yylval.intVal = 1;
-        return CONSTANT;}
+        return BOOL_CONSTANT;}
 "false" {print(key);
          yylval.intVal = 0;
-         return CONSTANT;}
+         return BOOL_CONSTANT;}
 
 "struct" {print(key);}
 "case" {print(key);}
@@ -199,23 +198,22 @@ WHITESPACE [ \t]+
 
 {INTEGER} {print(integer);
            yylval.intVal = atoi(yytext);
-           return CONSTANT;}
+           return INT_CONSTANT;}
 
 {DOUBLE} {print(doub);
           yylval.doubVal = atof(yytext);
-          return CONSTANT;}
+          return DOUB_CONSTANT;}
 
 {SCI} {print(sci);
        yylval.doubVal = atof(yytext);
-       return CONSTANT;}
+       return DOUB_CONSTANT;}
 
 {ID} {print(id);
-      strcpy(yylval.strVal, yytext);
       return ID;}
 
 {CHAR} {print(ch);
         yylval.charVal = yytext[0];
-        return CONSTANT;}
+        return CHAR_CONSTANT;}
 
 {STRING} {print(str);}
 

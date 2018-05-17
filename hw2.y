@@ -54,7 +54,7 @@ char   *install_symbol();
 %left <charv> OROR
 %left <charv> ANDAND
 %left <token> EQCOMPARE
-%left <token> ARITHCOMPARE  '>' '<' 
+%left <token> ARITHCOMPARE  '>' '<'
 %left <charv> '+' '-'
 %left <token> '*' '/' '%'
 %right <token> UNARY
