@@ -50,10 +50,10 @@ WHITESPACE [ \t]+
       mulComment = true;
       print(noth);
       return COMMENT_START;}
-"//" {inComment = true;
-      mulComment = false;
-      print(noth);
-      return COMMENT_SINGLE;}
+"//".* {inComment = true;
+        mulComment = false;
+        print(noth);
+        return COMMENT_SINGLE;}
 "*/" {inComment = false;
       mulComment = false;
       print(noth);
@@ -111,49 +111,91 @@ WHITESPACE [ \t]+
          yylval.intVal = 0;
          return BOOL_CONSTANT;}
 
-"struct" {print(key);}
+"struct" {print(key);
+          return ID;}
 
-"fclose" {print(key);}
-"clearerr" {print(key);}
-"feof" {print(key);}
-"ferror" {print(key);}
-"fflush" {print(key);}
-"fgetpos" {print(key);}
-"fopen" {print(key);}
-"fread" {print(key);}
-"freopen" {print(key);}
-"fseek" {print(key);}
-"fsetpos" {print(key);}
-"ftell" {print(key);}
-"fwrite" {print(key);}
-"remove" {print(key);}
-"rename" {print(key);}
-"rewind" {print(key);}
-"setbuf" {print(key);}
-"setvbuf" {print(key);}
-"tmpfile" {print(key);}
-"tmpnam" {print(key);}
-"fprintf" {print(key);}
-"printf" {print(key);}
-"sprintf" {print(key);}
-"vfprintf" {print(key);}
-"vprintf" {print(key);}
-"vsprintf" {print(key);}
-"fscanf" {print(key);}
-"scanf" {print(key);}
-"sscanf" {print(key);}
-"fgetc" {print(key);}
-"fgets" {print(key);}
-"fputc" {print(key);}
-"fputs" {print(key);}
-"getc" {print(key);}
-"getchar" {print(key);}
-"gets" {print(key);}
-"putc" {print(key);}
-"putchar" {print(key);}
-"puts" {print(key);}
-"ungetc" {print(key);}
-"perror" {print(key);}
+"fclose" {print(key);
+          return ID;}
+"clearerr" {print(key);
+            return ID;}
+"feof" {print(key);
+        return ID;}
+"ferror" {print(key);
+          return ID;}
+"fflush" {print(key);
+          return ID;}
+"fgetpos" {print(key);
+           return ID;}
+"fopen" {print(key);
+         return ID;}
+"fread" {print(key);
+         return ID;}
+"freopen" {print(key);
+           return ID;}
+"fseek" {print(key);
+         return ID;}
+"fsetpos" {print(key);
+           return ID;}
+"ftell" {print(key);
+         return ID;}
+"fwrite" {print(key);
+          return ID;}
+"remove" {print(key);
+          return ID;}
+"rename" {print(key);
+          return ID;}
+"rewind" {print(key);
+          return ID;}
+"setbuf" {print(key);
+          return ID;}
+"setvbuf" {print(key);
+           return ID;}
+"tmpfile" {print(key);
+           return ID;}
+"tmpnam" {print(key);
+          return ID;}
+"fprintf" {print(key);
+           return ID;}
+"printf" {print(key);
+          return ID;}
+"sprintf" {print(key);
+           return ID;}
+"vfprintf" {print(key);
+            return ID;}
+"vprintf" {print(key);
+           return ID;}
+"vsprintf" {print(key);
+            return ID;}
+"fscanf" {print(key);
+          return ID;}
+"scanf" {print(key);
+         return ID;}
+"sscanf" {print(key);
+          return ID;}
+"fgetc" {print(key);
+         return ID;}
+"fgets" {print(key);
+         return ID;}
+"fputc" {print(key);
+         return ID;}
+"fputs" {print(key);
+         return ID;}
+"getc" {print(key);
+        return ID;}
+"getchar" {print(key);
+           return ID;}
+"gets" {print(key);
+        return ID;}
+"putc" {print(key);
+        return ID;}
+"putchar" {print(key);
+           return ID;}
+"puts" {print(key);
+        return ID;}
+"ungetc" {print(key);
+          return ID;}
+"perror" {print(key);
+          return ID;}
 
 ":" {print(punc);
      return ':';}

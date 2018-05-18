@@ -176,6 +176,8 @@ var_declarations:
   | var_declaration
   ;
 
+/* Valid statements in functions */
+
 func_statements:
     func_statements func_statement
   | func_statement
@@ -193,6 +195,8 @@ func_statement:
   | return_statement
   | break_statement
   | continue_statement
+  | func_statement COMMENT
+  | func_statement PRAGMA
   ;
 
 simple_statement:
@@ -270,6 +274,8 @@ continue_statement:
     CONTINUE ';'
   ;
 
+/* Expressions */
+
 expressions:
     expressions ',' expression
   | expression
@@ -293,11 +299,14 @@ expression:
   | expression OROR expression
   | expression PLUSPLUS
   | expression MINUSMINUS
+  | '(' expression ')'
   ;
+
+/* Comments */
 
 COMMENT:
     COMMENT_START comment_contents COMMENT_END
-  | COMMENT_SINGLE comment_content
+  | COMMENT_SINGLE
   ;
 
 comment_contents:
@@ -306,9 +315,27 @@ comment_contents:
   ;
 
 comment_content:
-    expression
+    CONSTANT
+  | ID
   | ','
   | '.'
+  | ';'
+  | '('
+  | ')'
+  | '['
+  | ']'
+  | '{'
+  | '}'
+  | ':'
+  | '+'
+  | '-'
+  | '*'
+  | '/'
+  | '%'
+  | '='
+  | ARITHCOMPARE
+  | '!'
+  | '?'
   ;
 
 %%
