@@ -10,4 +10,4 @@ all:
 	gcc -o parser lex.yy.c y.tab.c
 
 clean:
-	rm -f lex.yy.c y.tab.c y.tab.h parser
+	rm -f lex.yy.c y.tab.c y.tab.h parser y.output

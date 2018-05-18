@@ -20,9 +20,10 @@
          char *strVal;
        }
 
-%token INT_CONSTANT DOUB_CONSTANT CHAR_CONSTANT BOOL_CONSTANT NONVOIDTYPE VOIDTYPE ID
-%token RETURN CONST
-%token COMMENT_START COMMENT_SINGLE COMMENT_END
+%token INT_CONSTANT DOUB_CONSTANT CHAR_CONSTANT BOOL_CONSTANT STR_CONSTANT
+%token NONVOIDTYPE VOIDTYPE ID
+%token RETURN CONST IF ELSE SWITCH CASE DEFAULT WHILE DO FOR BREAK CONTINUE
+%token COMMENT_START COMMENT_SINGLE COMMENT_END PRAGMA
 
 %type <strVal> ID
 
@@ -60,6 +61,7 @@ var_declaration:
   | func_declaration
   | const_declaration
   | COMMENT
+  | PRAGMA
   ;
 
 scalar_declaration:
@@ -147,19 +149,20 @@ CONSTANT:
   | DOUB_CONSTANT
   | CHAR_CONSTANT
   | BOOL_CONSTANT
+  | STR_CONSTANT
   ;
 
 /* Function definition */
 
 func_definition:
-    NONVOIDTYPE ID '(' parameters ')' '{' func_contents RETURN expression ';' '}'
-  | NONVOIDTYPE ID '(' ')' '{' func_contents RETURN expression ';' '}'
-  | NONVOIDTYPE ID '(' parameters ')' '{' RETURN expression ';' '}'
-  | NONVOIDTYPE ID '(' ')' '{' RETURN expression ';' '}'
-  | VOIDTYPE ID '(' parameters ')' '{' func_contents RETURN ';' '}'
-  | VOIDTYPE ID '(' ')' '{' func_contents RETURN ';' '}'
-  | VOIDTYPE ID '(' parameters ')' '{' RETURN ';' '}'
-  | VOIDTYPE ID '(' ')' '{' RETURN ';' '}'
+    NONVOIDTYPE ID '(' parameters ')' '{' func_contents '}'
+  | NONVOIDTYPE ID '(' ')' '{' func_contents '}'
+  | NONVOIDTYPE ID '(' parameters ')' '{' '}'
+  | NONVOIDTYPE ID '(' ')' '{' '}'
+  | VOIDTYPE ID '(' parameters ')' '{' func_contents '}'
+  | VOIDTYPE ID '(' ')' '{' func_contents '}'
+  | VOIDTYPE ID '(' parameters ')' '{' '}'
+  | VOIDTYPE ID '(' ')' '{' '}'
   ;
 
 func_contents:
@@ -174,13 +177,22 @@ var_declarations:
   ;
 
 func_statements:
-    func_statement func_statements
+    func_statements func_statement
   | func_statement
   ;
 
 func_statement:
     simple_statement
   | func_invocation
+  | if_statement else_statement
+  | if_statement
+  | switch_statement
+  | while_statement
+  | do_while_statement
+  | for_statement
+  | return_statement
+  | break_statement
+  | continue_statement
   ;
 
 simple_statement:
@@ -191,6 +203,72 @@ simple_statement:
 func_invocation:
     ID '(' expressions ')' ';'
   | ID '(' ')' ';'
+
+if_statement:
+    IF '(' expression ')' '{' func_contents '}'
+  | IF '(' expression ')' '{' '}'
+  ;
+
+else_statement:
+    ELSE '{' func_contents '}'
+  | ELSE '(' expression ')' '{' '}'
+  ;
+
+switch_statement:
+    SWITCH '(' ID ')' '{' case_statements default_statement '}'
+  | SWITCH '(' ID ')' '{' case_statements '}'
+  ;
+
+case_statements:
+    case_statements case_statement
+  | case_statement
+  ;
+
+case_statement:
+    CASE INT_CONSTANT ':' func_statements
+  | CASE INT_CONSTANT ':'
+  | CASE CHAR_CONSTANT ':' func_statements
+  | CASE CHAR_CONSTANT ':'
+  ;
+
+default_statement:
+    DEFAULT ':' func_statements
+  | DEFAULT ':'
+  ;
+
+while_statement:
+    WHILE '(' expression ')' '{' func_contents '}'
+  | WHILE '(' expression ')' '{' '}'
+  ;
+
+do_while_statement:
+    DO '{' func_contents '}' WHILE '(' expression ')' ';'
+  | DO '{' '}' WHILE '(' expression ')' ';'
+  ;
+
+for_statement:
+    FOR '(' expression ';' expression ';' expression ')' '{' func_contents '}'
+  | FOR '(' expression ';' expression ';' expression ')' '{' '}'
+  | FOR '(' ';' expression ';' expression ')' '{' func_contents '}'
+  | FOR '(' ';' expression ';' expression ')' '{' '}'
+  | FOR '(' expression ';' ';' expression ')' '{' func_contents '}'
+  | FOR '(' expression ';' ';' expression ')' '{' '}'
+  | FOR '(' expression ';' expression ';' ')' '{' func_contents '}'
+  | FOR '(' expression ';' expression ';' ')' '{' '}'
+  ;
+
+return_statement:
+    RETURN expression ';'
+  | RETURN ';'
+  ;
+
+break_statement:
+    BREAK ';'
+  ;
+
+continue_statement:
+    CONTINUE ';'
+  ;
 
 expressions:
     expressions ',' expression
@@ -229,6 +307,8 @@ comment_contents:
 
 comment_content:
     expression
+  | ','
+  | '.'
   ;
 
 %%

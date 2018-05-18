@@ -33,13 +33,17 @@ WHITESPACE [ \t]+
 %%
 
 "#pragma source on" {sourceOn = true;
-                     print(noth);}
+                     print(noth);
+                     return PRAGMA;}
 "#pragma source off" {sourceOn = false;
-                      print(noth);}
+                      print(noth);
+                      return PRAGMA;}
 "#pragma token on" {tokenOn = true;
-                    print(noth);}
+                    print(noth);
+                    return PRAGMA;}
 "#pragma token off" {tokenOn = false;
-                     print(noth);}
+                     print(noth);
+                     return PRAGMA;}
 "#pragma". {print(error);}
 
 "/*" {inComment = true;
@@ -70,18 +74,32 @@ WHITESPACE [ \t]+
         yylval.intVal = 0;
         return INT_CONSTANT;}
 
-"for" {print(key);}
-"while" {print(key);}
-"do" {print(key);}
-"if" {print(key);}
-"else" {print(key);}
-"switch" {print(key);}
+"for" {print(key);
+      return FOR;}
+"while" {print(key);
+         return WHILE;}
+"do" {print(key);
+      return DO;}
+
+"if" {print(key);
+      return IF;}
+"else" {print(key);
+        return ELSE;}
+
+"switch" {print(key);
+          return SWITCH;}
+"case" {print(key);
+        return CASE;}
+"default" {print(key);
+           return DEFAULT;}
 
 "return" {print(key);
           return RETURN;}
 
-"break" {print(key);}
-"continue" {print(key);}
+"break" {print(key);
+         return BREAK;}
+"continue" {print(key);
+            return CONTINUE;}
 
 "const" {print(key);
          return CONST;}
@@ -94,8 +112,7 @@ WHITESPACE [ \t]+
          return BOOL_CONSTANT;}
 
 "struct" {print(key);}
-"case" {print(key);}
-"default" {print(key);}
+
 "fclose" {print(key);}
 "clearerr" {print(key);}
 "feof" {print(key);}
@@ -217,7 +234,9 @@ WHITESPACE [ \t]+
         yylval.charVal = yytext[0];
         return CHAR_CONSTANT;}
 
-{STRING} {print(str);}
+{STRING} {print(str);
+          yylval.strVal = yytext;
+          return STR_CONSTANT;}
 
 {DIGIT}[a-zA-Z0-9]+ {print(error);}
 {DIGIT}+[eE][+-]?[a-zA-Z]+|{DOUBLE}[eE][+-]?[a-zA-Z]+ {print(error);}
