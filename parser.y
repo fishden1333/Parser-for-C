@@ -48,8 +48,10 @@ program:
 
 external:
     external var_declaration
+  | external func_declaration
   | external func_definition
   | var_declaration
+  | func_declaration
   | func_definition
   ;
 
@@ -58,7 +60,6 @@ external:
 var_declaration:
     scalar_declaration
   | array_declaration
-  | func_declaration
   | const_declaration
   | COMMENT
   | PRAGMA
@@ -97,21 +98,21 @@ IDarr_declarations:
   ;
 
 IDarr_declaration:
-    ID dimensions
-  | ID dimension '=' arr_content
+    ID dcl_dimensions
+  | ID dcl_dimensions '=' arr_content
   ;
 
-dimensions:
-    dimensions dimension
-  | dimension
+dcl_dimensions:
+    dcl_dimensions dcl_dimension
+  | dcl_dimension
   ;
 
-dimension:
+dcl_dimension:
     '[' INT_CONSTANT ']'
   ;
 
 arr_content:
-    '{' expressions '}'
+    '{' arr_expressions '}'
   | '{''}'
   ;
 
@@ -132,7 +133,7 @@ parameters:
 
 parameter:
     NONVOIDTYPE ID
-  | NONVOIDTYPE ID dimensions
+  | NONVOIDTYPE ID dcl_dimensions
   ;
 
 IDconst_declarations:
@@ -143,6 +144,8 @@ IDconst_declarations:
 IDconst_declaration:
     ID '=' CONSTANT
   ;
+
+/* Constant */
 
 CONSTANT:
     INT_CONSTANT
@@ -201,7 +204,16 @@ func_statement:
 
 simple_statement:
     ID '=' expression ';'
-  | ID dimensions '=' expression ';'
+  | ID stm_dimensions '=' expression ';'
+  ;
+
+stm_dimensions:
+    stm_dimensions stm_dimension
+  | stm_dimension
+  ;
+
+stm_dimension:
+    '[' expression ']'
   ;
 
 func_invocation:
@@ -283,8 +295,10 @@ expressions:
 
 expression:
     CONSTANT
+  | '-' CONSTANT
   | ID
-  | ID dimensions
+  | '-' ID
+  | ID stm_dimensions
   | ID '(' expressions ')'
   | ID '(' ')'
   | expression '=' expression
@@ -300,6 +314,34 @@ expression:
   | expression PLUSPLUS
   | expression MINUSMINUS
   | '(' expression ')'
+  ;
+
+/* Expression without function invocation */
+
+arr_expressions:
+    arr_expressions ',' arr_expression
+  | arr_expression
+  ;
+
+arr_expression:
+    CONSTANT
+  | '-' CONSTANT
+  | ID
+  | '-' ID
+  | ID stm_dimensions
+  | arr_expression '=' arr_expression
+  | arr_expression '+' arr_expression
+  | arr_expression '-' arr_expression
+  | arr_expression '*' arr_expression
+  | arr_expression '/' arr_expression
+  | arr_expression '%' arr_expression
+  | arr_expression ARITHCOMPARE arr_expression
+  | '!' arr_expression
+  | arr_expression ANDAND arr_expression
+  | arr_expression OROR arr_expression
+  | arr_expression PLUSPLUS
+  | arr_expression MINUSMINUS
+  | '(' arr_expression ')'
   ;
 
 /* Comments */
